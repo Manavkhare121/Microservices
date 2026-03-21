@@ -1,0 +1,45 @@
+import mongoose, { Schema } from "mongoose";
+const addressSchema = new Schema({
+  street: String,
+  city: String,
+  state: String,
+  zip: String,
+  country: String,
+});
+const userSchema = new Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+    },
+    fullName: {
+      firstName: { type: String, required: true },
+      lastName: {
+        type: String,
+        required: true,
+      },
+    },
+    role: {
+      type: String,
+      enum: ["user", "seller"],
+      default: "user",
+    },
+    addresses: {
+      addressSchema,
+    },
+  },
+  {
+    timestamps: true,
+  },
+);
+
+export const userModel=mongoose.model("user",userSchema)
