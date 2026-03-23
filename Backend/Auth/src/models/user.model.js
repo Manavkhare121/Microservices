@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+
 const addressSchema = new Schema({
   street: String,
   city: String,
@@ -6,6 +7,7 @@ const addressSchema = new Schema({
   zip: String,
   country: String,
 });
+
 const userSchema = new Schema(
   {
     username: {
@@ -23,23 +25,18 @@ const userSchema = new Schema(
     },
     fullName: {
       firstName: { type: String, required: true },
-      lastName: {
-        type: String,
-        required: true,
-      },
+      lastName: { type: String, required: true },
     },
     role: {
       type: String,
       enum: ["user", "seller"],
       default: "user",
     },
-    addresses: {
-      addressSchema,
-    },
+    addresses: [addressSchema],
   },
   {
     timestamps: true,
-  },
+  }
 );
 
-export const userModel=mongoose.model("user",userSchema)
+export const userModel = mongoose.model("User", userSchema); 
