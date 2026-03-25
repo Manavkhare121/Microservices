@@ -1,12 +1,12 @@
 import { body, validationResult } from "express-validator";
 
-const respondWithvalidationErros=(req,res,next)=>{
-    const errors=validationResult(req);
-    if(!errors.isEmpty()){
-        return res.status(400).json({errors:errors.array()})
-    }
-    next();
-}
+const respondWithvalidationErros = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+};
 const registerUserValidations = [
   body("username")
     .isString()
@@ -22,12 +22,11 @@ const registerUserValidations = [
     .withMessage("First name must be a string")
     .notEmpty()
     .withMessage("First name is reuiqred"),
-    body("fullName.lastName")
+  body("fullName.lastName")
     .isString()
     .withMessage("last name must be a string")
     .notEmpty()
-    .withMessage("last name is reuiqred")
-
+    .withMessage("last name is reuiqred"),
 ];
 
-export {registerUserValidations}
+export { registerUserValidations, respondWithvalidationErros };
