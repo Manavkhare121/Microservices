@@ -3,8 +3,8 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import bcrypt from 'bcryptjs';
-import app from '../app.js';
-import User from '../models/user.model.js';
+import app from '../src/app.js';
+import { userModel } from "../src/models/user.model.js";
 
 jest.setTimeout(60000);
 
@@ -27,14 +27,14 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await User.deleteMany({});
+  await userModel.deleteMany({});
 });
 
 describe('/api/auth/login', () => {
   it('logs in with email and correct password', async () => {
     const password = 'Password123!';
     const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({
+    const user = await userModel.create({
       username: 'john_doe',
       email: 'john@example.com',
       password: hash,
@@ -61,7 +61,7 @@ describe('/api/auth/login', () => {
   it('logs in with username and correct password', async () => {
     const password = 'Password123!';
     const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({
+    const user = await userModel.create({
       username: 'jane_doe',
       email: 'jane@example.com',
       password: hash,
@@ -80,7 +80,7 @@ describe('/api/auth/login', () => {
 
   it('rejects wrong password', async () => {
     const hash = await bcrypt.hash('Password123!', 10);
-    await User.create({
+    await userModel.create({
       username: 'john_doe',
       email: 'john@example.com',
       password: hash,

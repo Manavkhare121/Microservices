@@ -29,4 +29,33 @@ const registerUserValidations = [
     .withMessage("last name is reuiqred"),
 ];
 
-export { registerUserValidations, respondWithvalidationErros };
+const loginUserValidations=[
+   body('email')
+    .optional()
+    .isEmail()
+    .withMessage('Invalid email format'),
+
+    body('username')
+    .optional()
+    .isString()
+    .withMessage('Username must be a string')
+    .notEmpty()
+    .withMessage('Username is required'),
+
+    body('password')
+    .isString()
+    .withMessage('Password must be a string')
+    .notEmpty()
+    .withMessage('Password is required'),
+
+    body()
+    .custom((value) => {
+        if (!value.email && !value.username) {
+            throw new Error('Either email or username is required');
+        }
+        return true;
+    }),
+
+    respondWithvalidationErros
+]
+export { registerUserValidations, respondWithvalidationErros ,loginUserValidations};
