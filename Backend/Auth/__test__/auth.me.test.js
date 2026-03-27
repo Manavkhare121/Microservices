@@ -1,11 +1,11 @@
-
 import { jest } from '@jest/globals';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import jwt from 'jsonwebtoken';
 import app from '../src/app.js';
-import {userModel} from "../src/models/user.model.js";
+import { userModel } from '../src/models/user.model.js';
+import redis from '../src/db/redis.js';
 
 jest.setTimeout(60000);
 
@@ -25,23 +25,31 @@ afterAll(async () => {
   await mongoose.connection.dropDatabase();
   await mongoose.connection.close();
   if (mongo) await mongo.stop();
+
+  // ✅ close Redis
+  if (redis?.quit) await redis.quit();
 });
 
 beforeEach(async () => {
   await userModel.deleteMany({});
 });
 
-const createUser = async () =>
-  userModel.create({
+// ✅ Helper
+const createUser = async () => {
+  return userModel.create({
     username: 'john_doe',
     email: 'john@example.com',
     password: 'hashed-password',
     fullName: { firstName: 'John', lastName: 'Doe' },
   });
+};
 
 describe('/api/auth/me', () => {
+
+  // ✅ SUCCESS
   it('returns the authenticated user when a valid token cookie is provided', async () => {
     const user = await createUser();
+
     const token = jwt.sign(
       {
         id: user._id,
@@ -50,7 +58,7 @@ describe('/api/auth/me', () => {
         role: user.role,
       },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' },
+      { expiresIn: '1h' }
     );
 
     const res = await request(app)
@@ -59,21 +67,27 @@ describe('/api/auth/me', () => {
       .expect(200);
 
     expect(res.body.message).toBe('Current user fetched successfully');
+
     expect(res.body.user).toMatchObject({
       id: user._id.toString(),
       username: 'john_doe',
       email: 'john@example.com',
       fullName: { firstName: 'John', lastName: 'Doe' },
     });
+
     expect(res.body.user).toHaveProperty('role', 'user');
   });
 
+  // ❌ NO TOKEN
   it('rejects requests that do not include an auth cookie', async () => {
-    const res = await request(app).get('/api/auth/me').expect(401);
+    const res = await request(app)
+      .get('/api/auth/me')
+      .expect(401);
 
     expect(res.body.error).toBe('Authentication required');
   });
 
+  // ❌ INVALID TOKEN
   it('rejects requests when the token is invalid or expired', async () => {
     const res = await request(app)
       .get('/api/auth/me')
@@ -82,4 +96,5 @@ describe('/api/auth/me', () => {
 
     expect(res.body.error).toBe('Invalid or expired token');
   });
+
 });

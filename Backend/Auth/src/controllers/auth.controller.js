@@ -1,6 +1,7 @@
 import { userModel } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import redis from "../db/redis.js"
 
 export async function registerUser(req, res) {
   const { username, email, password, fullName: { firstName, lastName } } = req.body;
@@ -118,7 +119,7 @@ export async function getCurrentUser(req, res) {
     });
 }
 
-async function logoutUser(req, res) {
+export async function logoutUser(req, res) {
     const token = req.cookies.token;
 
     if (!token) {
