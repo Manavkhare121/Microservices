@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import bcrypt from 'bcryptjs';
 import app from '../src/app.js';
-import { userModel } from "../src/models/user.model.js";
+import {userModel} from "../src/models/user.model.js";
 
 jest.setTimeout(60000);
 
@@ -14,7 +14,7 @@ beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
   const uri = mongo.getUri();
 
-  process.env.MONGO_URI = uri;
+  process.env.MONGODB_URI = uri;
   process.env.JWT_SECRET = 'testsecret';
 
   await mongoose.connect(uri, { dbName: 'auth-test' });

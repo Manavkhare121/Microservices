@@ -15,7 +15,7 @@ beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
   const uri = mongo.getUri();
 
-  process.env.MONGO_URI = uri;
+  process.env.MONGODB_URI = uri;
   process.env.JWT_SECRET = 'testsecret';
 
   await mongoose.connect(uri, { dbName: 'auth-test' });
@@ -26,7 +26,7 @@ afterAll(async () => {
   await mongoose.connection.close();
   if (mongo) await mongo.stop();
 
-  // ✅ close Redis
+ 
   if (redis?.quit) await redis.quit();
 });
 
@@ -34,7 +34,6 @@ beforeEach(async () => {
   await userModel.deleteMany({});
 });
 
-// ✅ Helper
 const createUser = async () => {
   return userModel.create({
     username: 'john_doe',
@@ -78,7 +77,7 @@ describe('/api/auth/me', () => {
     expect(res.body.user).toHaveProperty('role', 'user');
   });
 
-  // ❌ NO TOKEN
+ 
   it('rejects requests that do not include an auth cookie', async () => {
     const res = await request(app)
       .get('/api/auth/me')
@@ -87,14 +86,20 @@ describe('/api/auth/me', () => {
     expect(res.body.error).toBe('Authentication required');
   });
 
-  // ❌ INVALID TOKEN
+ 
   it('rejects requests when the token is invalid or expired', async () => {
+    // 1. Spy on console.error and mock it to do nothing
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
     const res = await request(app)
       .get('/api/auth/me')
       .set('Cookie', ['token=invalid'])
       .expect(401);
 
     expect(res.body.error).toBe('Invalid or expired token');
+
+    // 2. Restore console.error so other tests can still print real errors
+    consoleSpy.mockRestore();
   });
 
 });

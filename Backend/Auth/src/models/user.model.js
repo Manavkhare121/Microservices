@@ -4,8 +4,12 @@ const addressSchema = new Schema({
   street: String,
   city: String,
   state: String,
-  zip: String,
+  zipCode: String,
   country: String,
+  isDefault:{
+        type:Boolean,
+        default:false
+    }
 });
 
 const userSchema = new Schema(

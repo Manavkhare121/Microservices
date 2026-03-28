@@ -8,4 +8,8 @@ app.use(cookieParser());
 
 import authRoutes from "../src/routes/auth.routes.js"
 app.use('/api/auth',authRoutes);
+
+import userRoutes from "../src/routes/user.routes.js"
+app.use('/api/user',userRoutes);
+
 export default app;

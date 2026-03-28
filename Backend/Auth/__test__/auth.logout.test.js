@@ -15,7 +15,7 @@ beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
   const uri = mongo.getUri();
 
-  process.env.MONGO_URI = uri;
+  process.env.MONGODB_URI = uri;
   process.env.JWT_SECRET = 'testsecret';
 
   await mongoose.connect(uri, { dbName: 'auth-test' });

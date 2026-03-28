@@ -27,6 +27,11 @@ const registerUserValidations = [
     .withMessage("last name must be a string")
     .notEmpty()
     .withMessage("last name is reuiqred"),
+  body("role")
+  .optional()
+  .isIn(['user','seller'])
+  .withMessage("Role must be either 'user' or'seller'"),
+  respondWithvalidationErros
 ];
 
 const loginUserValidations=[
@@ -58,4 +63,45 @@ const loginUserValidations=[
 
     respondWithvalidationErros
 ]
-export { registerUserValidations, respondWithvalidationErros ,loginUserValidations};
+
+const addUserAddressValidator = [  
+    body('street')
+    .isString()
+    .withMessage('Street must be a string')
+    .notEmpty()
+    .withMessage('Street is required'),
+
+    body('city')
+    .isString()
+    .withMessage('City must be a string')
+    .notEmpty()
+    .withMessage('City is required'),
+
+    body('state')
+    .isString()
+    .withMessage('State must be a string')
+    .notEmpty()
+    .withMessage('State is required'),
+
+    body('zipCode') // <-- CHANGED HERE
+    .isString()
+    .withMessage('Zip code must be a string')
+    .notEmpty()
+    .withMessage('Zip code is required'),
+
+    body('country')
+    .isString()
+    .withMessage('Country must be a string')
+    .notEmpty()
+    .withMessage('Country is required'),
+
+    body('isDefault')
+    .optional()
+    .isBoolean()
+    .withMessage('isDefault must be a boolean'),
+
+    
+
+    respondWithvalidationErros
+]
+export { registerUserValidations, respondWithvalidationErros ,loginUserValidations,addUserAddressValidator};
