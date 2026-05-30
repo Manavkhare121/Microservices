@@ -37,4 +37,7 @@ const productSchema = new Schema(
   },
 );
 
+productSchema.index({title:'text',description:'text'})
+//text index bo hota hai jiss property pe lagate hain toh usse kya hota hai bo query ko fast kardeta hai jobhi aap input doge uske sabse pass bo answer deta hai
+ 
 export const product = mongoose.model("product", productSchema);
